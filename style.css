@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.img-container {
+  background: url(Images/iNewBG.png);
+}
+
+html {
+  scroll-behavior: smooth;
+}
