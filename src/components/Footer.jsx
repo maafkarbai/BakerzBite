@@ -86,7 +86,7 @@ function Footer() {
       <section className="bg-gradient-to-r from-[#D65A31] to-[#E97451]" aria-labelledby="newsletter-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
-            <h2 id="newsletter-heading" className="text-3xl font-bold font-Pacifico mb-4">
+            <h2 id="newsletter-heading" className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
               Stay Sweet with Us!
             </h2>
             <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
@@ -133,7 +133,7 @@ function Footer() {
                 className="w-10 h-10 mr-3" 
                 alt="BakerzBite Logo" 
               />
-              <span className="text-2xl font-Pacifico text-[#D65A31]">Bakerz Bite</span>
+              <span className="text-2xl font-bold text-[#D65A31]">Bakerz Bite</span>
             </div>
             <p className="text-gray-300 mb-6 leading-relaxed">
               Crafting delicious memories since 2020. From artisan breads to decadent desserts, 

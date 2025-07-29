@@ -128,27 +128,27 @@ function HeroSection() {
       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       
       {/* Content */}
-      <div className="relative z-10 text-center text-white px-4 md:px-8 max-w-5xl mx-auto">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-Pacifico mb-6 drop-shadow-2xl animate-fadein">
+      <div className="relative z-10 text-center text-white px-4 md:px-8 max-w-6xl mx-auto">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 drop-shadow-2xl leading-tight tracking-tight">
           Bakerz Bite
         </h1>
-        <p className="text-xl md:text-2xl lg:text-3xl font-Oxygen mb-8 opacity-90 animate-fadein animation-delay-200">
+        <p className="text-xl md:text-2xl lg:text-3xl mb-10 opacity-95 font-medium leading-relaxed">
           Where Every Bite Tells a Story
         </p>
-        <p className="text-lg md:text-xl mb-12 max-w-2xl mx-auto opacity-80 animate-fadein animation-delay-400">
-          Freshly baked goods made with passion, served with love
+        <p className="text-lg md:text-xl mb-14 max-w-2xl mx-auto opacity-90 leading-relaxed">
+          Freshly baked goods made with passion, served with love. Experience the artistry of traditional baking.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fadein animation-delay-600">
+        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
           <Link 
             to="/products" 
-            className="px-8 py-4 bg-[#D65A31] text-white rounded-full font-semibold text-lg hover:bg-[#C54A21] transition-all duration-300 transform hover:scale-105 shadow-lg"
+            className="inline-flex items-center justify-center px-10 py-5 bg-[#D65A31] text-white rounded-lg font-semibold text-lg hover:bg-[#C54A21] transition-all duration-300 transform hover:scale-105 shadow-xl min-h-[60px] min-w-[200px]"
           >
             Explore Our Menu
           </Link>
           <Link 
             to="/gallery" 
-            className="px-8 py-4 bg-white text-[#D65A31] rounded-full font-semibold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            className="inline-flex items-center justify-center px-10 py-5 bg-white bg-opacity-90 text-[#D65A31] rounded-lg font-semibold text-lg hover:bg-opacity-100 transition-all duration-300 transform hover:scale-105 shadow-xl min-h-[60px] min-w-[200px]"
           >
             View Gallery
           </Link>

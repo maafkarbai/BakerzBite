@@ -26,50 +26,62 @@ function Navbar() {
   ];
 
   return (
-    <header className="fixed z-40 w-full">
-      <nav className="flex items-center justify-between h-16 px-16 align-middle bg-bg-pattern opacity-95 hover:opacity-100 drop-shadow-md">
-        <div className="flex items-center justify-between logo">
+    <header className="fixed z-40 w-full bg-white shadow-md">
+      <nav className="flex items-center justify-between h-16 px-4 lg:px-16 bg-gradient-to-r from-orange-50 to-white">
+        <div className="flex items-center space-x-3">
           <img 
             src={logoUrl} 
             onError={(e) => { e.target.src = "/Images/CROISSANT LOGO (1).png"; }}
-            className="w-12" 
-            alt="Logo" 
+            className="w-12 h-12" 
+            alt="Bakerz Bite Logo" 
           />
-          <div className="logotext">
-            <Link to="/">
-              <p className="text-2xl text-gray font-Pacifico">Bakerz Bite</p>
+          <div>
+            <Link to="/" className="text-2xl font-bold text-[#D65A31] hover:text-[#C54A21] transition-colors">
+              Bakerz Bite
             </Link>
           </div>
         </div>
         
-        <div className="mx-4 navlist text-gray">
-          <ul className="hidden lg:flex">
+        <div className="hidden lg:flex">
+          <ul className="flex items-center space-x-8 text-gray-700">
             {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`mx-4 hover:underline underline-offset-8 decoration-[#D65A31] decoration-4 hover:scale-105 ease-in-out duration-500 ${
-                  isActive(link.path) ? 'underline' : ''
-                }`}
-              >
-                {link.label}
-              </Link>
+              <li key={link.path}>
+                <Link
+                  to={link.path}
+                  className={`hover:text-[#D65A31] hover:underline underline-offset-4 decoration-2 decoration-[#D65A31] transition-all duration-300 ${
+                    isActive(link.path) ? 'text-[#D65A31] underline' : ''
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              </li>
             ))}
-            <Link
-              to="/cart"
-              className="mx-4 hover:underline underline-offset-8 decoration-[#D65A31] decoration-4 hover:scale-105 ease-in-out duration-500"
-            >
-              Cart
-            </Link>
+            <li>
+              <Link
+                to="/cart"
+                className="bg-[#D65A31] text-white px-4 py-2 rounded-md hover:bg-[#C54A21] transition-colors duration-300 font-medium"
+              >
+                Cart
+              </Link>
+            </li>
           </ul>
         </div>
         
-        <div className="rounded-full bg-slate-200 hover:bg-slate-300 lg:hidden">
+        <div className="lg:hidden">
           <button 
-            className="p-2"
+            className="p-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle mobile menu"
+            aria-expanded={isMobileMenuOpen}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="text-gray" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              strokeWidth="2" 
+              stroke="currentColor" 
+              className="w-6 h-6 text-gray-700"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
           </button>
@@ -77,13 +89,14 @@ function Navbar() {
       </nav>
       
       {isMobileMenuOpen && (
-        <nav className="mobile-navbar animate-fadein bg-[#D65A31] h-60 text-white font-Oxygen text-2xl justify-center align-middle items-center text-justify rounded-lg w-full">
-          <ul className="flex flex-col items-center justify-center h-full gap-2 align-middle">
+        <nav className="lg:hidden bg-[#D65A31] shadow-lg transition-all duration-300 ease-in-out">
+          <ul className="flex flex-col py-4 space-y-2">
             {navLinks.map((link) => (
               <li key={link.path}>
                 <Link 
                   to={link.path}
                   onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-6 py-3 text-white hover:bg-[#C54A21] transition-colors duration-200"
                 >
                   {link.label}
                 </Link>
@@ -93,6 +106,7 @@ function Navbar() {
               <Link 
                 to="/cart"
                 onClick={() => setIsMobileMenuOpen(false)}
+                className="block px-6 py-3 text-white hover:bg-[#C54A21] transition-colors duration-200 border-t border-[#C54A21] mt-2 pt-4"
               >
                 Cart
               </Link>

@@ -54,18 +54,18 @@ function ProductCard({ product }) {
       <div className="p-6">
         <h3 
           id={`product-${product.id}-name`}
-          className="text-xl font-semibold mb-2 font-Oxygen text-gray-800"
+          className="text-xl font-bold mb-3 text-gray-900 leading-tight"
         >
           {product.name}
         </h3>
         
         {product.description && (
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
         )}
         
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-6">
           <span 
             className="text-2xl font-bold text-[#D65A31]"
             aria-label={`Price: ${product.price.toFixed(2)} dollars`}
@@ -73,7 +73,7 @@ function ProductCard({ product }) {
             ${product.price.toFixed(2)}
           </span>
           <span 
-            className="text-sm text-gray-500 capitalize"
+            className="text-sm text-gray-500 capitalize bg-gray-100 px-3 py-1 rounded-full"
             aria-label={`Category: ${product.category}`}
           >
             {product.category}
@@ -83,7 +83,7 @@ function ProductCard({ product }) {
         <button
           onClick={handleAddToCart}
           disabled={!product.inStock}
-          className="w-full py-3 bg-[#D65A31] text-white rounded-lg font-semibold hover:bg-[#C54A21] transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-[#D65A31] focus:outline-none focus:ring-2 focus:ring-[#D65A31] focus:ring-offset-2"
+          className="w-full py-4 bg-[#D65A31] text-white rounded-lg font-semibold hover:bg-[#C54A21] transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-[#D65A31] focus:outline-none focus:ring-2 focus:ring-[#D65A31] focus:ring-offset-2 shadow-md hover:shadow-lg min-h-[56px]"
           aria-label={`Add ${product.name} to cart for $${product.price.toFixed(2)}`}
         >
           <svg 

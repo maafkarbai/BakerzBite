@@ -102,15 +102,15 @@ function Products() {
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
       {/* Header */}
-      <section className="bg-gradient-to-r from-[#D65A31] to-[#E97451] text-white py-12">
+      <section className="bg-gradient-to-r from-[#D65A31] to-[#E97451] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
-          <h1 className="text-4xl md:text-5xl font-bold font-Oxygen mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
             {searchQuery ? 'Search Results' : 'Our Products'}
           </h1>
-          <p className="text-lg opacity-90">
+          <p className="text-lg md:text-xl opacity-95 max-w-2xl leading-relaxed">
             {searchQuery 
               ? `Found ${filteredProducts.length} result${filteredProducts.length !== 1 ? 's' : ''} for "${searchQuery}"`
-              : 'Handcrafted with love, baked to perfection'
+              : 'Handcrafted with love, baked to perfection. Each product tells a story of passion and tradition.'
             }
           </p>
         </div>
@@ -119,24 +119,29 @@ function Products() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16 py-8">
         {/* Error Message */}
         {error && (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
-            <p className="text-sm">API temporarily unavailable. Showing cached products.</p>
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-4 rounded-lg mb-8 shadow-sm">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <p className="font-medium">API temporarily unavailable. Showing cached products.</p>
+            </div>
           </div>
         )}
         
         {/* Category Filter */}
-        <div className="flex flex-wrap gap-4 mb-8 justify-center">
+        <div className="flex flex-wrap gap-4 mb-12 justify-center">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 ${
+              className={`px-8 py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] text-lg min-h-[56px] ${
                 selectedCategory === cat.id
-                  ? 'bg-[#D65A31] text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 shadow'
+                  ? 'bg-[#D65A31] text-white shadow-lg hover:bg-[#C54A21]'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg border border-gray-200'
               }`}
             >
-              <span className="mr-2">{cat.icon}</span>
+              <span className="mr-3 text-xl">{cat.icon}</span>
               {cat.name}
             </button>
           ))}
@@ -144,13 +149,15 @@ function Products() {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="bg-gray-200 h-64 rounded-t-lg"></div>
-                <div className="bg-white p-6 rounded-b-lg">
-                  <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div key={i} className="animate-pulse bg-white rounded-xl shadow-lg overflow-hidden">
+                <div className="bg-gray-200 h-64"></div>
+                <div className="p-6">
+                  <div className="h-6 bg-gray-200 rounded mb-3"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2 mb-6"></div>
+                  <div className="h-12 bg-gray-200 rounded"></div>
                 </div>
               </div>
             ))}
@@ -158,11 +165,26 @@ function Products() {
         ) : (
           <>
             {filteredProducts.length === 0 ? (
-              <div className="text-center py-16">
-                <p className="text-xl text-gray-600">No products found in this category.</p>
+              <div className="text-center py-20">
+                <div className="text-6xl mb-6">🔍</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">No products found</h3>
+                <p className="text-lg text-gray-600 max-w-md mx-auto">
+                  {searchQuery 
+                    ? `We couldn't find any products matching "${searchQuery}". Try adjusting your search.`
+                    : "No products found in this category. Please try another category."
+                  }
+                </p>
+                {searchQuery && (
+                  <button
+                    onClick={() => window.history.back()}
+                    className="mt-6 px-6 py-3 bg-[#D65A31] text-white rounded-lg font-semibold hover:bg-[#C54A21] transition-colors duration-300"
+                  >
+                    Go Back
+                  </button>
+                )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
