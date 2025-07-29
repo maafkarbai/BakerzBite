@@ -20,7 +20,9 @@ export const getCloudinaryUrl = (publicId, options = {}) => {
     .map(([key, value]) => `${key[0]}_${value}`)
     .join(',');
   
-  return `https://res.cloudinary.com/${cloudinaryConfig.cloudName}/image/upload/${transformations}/${publicId}`;
+  const resourceType = options.resource_type === 'video' ? 'video' : 'image';
+  
+  return `https://res.cloudinary.com/${cloudinaryConfig.cloudName}/${resourceType}/upload/${transformations}/${publicId}`;
 };
 
 // Product image mappings using Cloudinary demo images for immediate testing

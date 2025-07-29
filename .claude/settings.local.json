@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(cld uploader upload:*)",
+      "Bash(bun add:*)",
+      "Bash(cloudinary:*)",
+      "Bash(export:*)"
     ],
     "deny": []
   }

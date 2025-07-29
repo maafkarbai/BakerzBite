@@ -1,15 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getCloudinaryUrl } from '../config/cloudinary';
 
 function Footer() {
-  const logoUrl = getCloudinaryUrl('bakerz-bite/logo/croissant-logo', {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState('');
+
+  const logoUrl = getCloudinaryUrl('bakerz-bite/logo/croissant-logo-white', {
     width: 40,
     height: 40,
     format: 'png'
   });
 
   const currentYear = new Date().getFullYear();
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubscriptionStatus('');
+
+    try {
+      // Simulate API call - replace with actual newsletter service
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // For demo purposes, just show success message
+      setSubscriptionStatus('success');
+      setEmail('');
+      
+      // Reset status after 3 seconds
+      setTimeout(() => setSubscriptionStatus(''), 3000);
+    } catch (error) {
+      setSubscriptionStatus('error');
+      setTimeout(() => setSubscriptionStatus(''), 3000);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const footerLinks = {
     company: [
@@ -92,30 +119,80 @@ function Footer() {
             <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
               Subscribe to our newsletter and be the first to know about new products, special offers, and baking tips from our kitchen to yours.
             </p>
-            <form className="max-w-md mx-auto" aria-label="Newsletter subscription">
-              <div className="flex">
-                <label htmlFor="newsletter-email" className="sr-only">
-                  Email address for newsletter subscription
-                </label>
-                <input
-                  id="newsletter-email"
-                  type="email"
-                  required
-                  placeholder="Enter your email address"
-                  className="flex-1 px-4 py-3 rounded-l-full text-gray-900 placeholder-gray-500 border-2 border-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#D65A31] focus:border-white"
-                  aria-describedby="newsletter-privacy"
-                />
+            <form onSubmit={handleNewsletterSubmit} className="max-w-lg mx-auto" aria-label="Newsletter subscription">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-0">
+                <div className="flex-1">
+                  <label htmlFor="newsletter-email" className="sr-only">
+                    Email address for newsletter subscription
+                  </label>
+                  <input
+                    id="newsletter-email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    disabled={isSubmitting}
+                    className="w-full px-5 py-4 sm:rounded-l-xl sm:rounded-r-none rounded-xl text-gray-900 placeholder-gray-500 bg-white/95 backdrop-blur-sm border-2 border-white/50 shadow-lg focus:outline-none focus:ring-4 focus:ring-white/50 focus:border-white focus:bg-white transition-all duration-300 text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-describedby="newsletter-privacy newsletter-status"
+                  />
+                </div>
                 <button 
                   type="submit"
-                  className="px-6 py-3 bg-white text-[#D65A31] font-semibold rounded-r-full border-2 border-white hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#D65A31]"
+                  disabled={isSubmitting || !email.trim()}
+                  className="px-8 py-4 bg-white text-[#D65A31] font-bold text-base sm:rounded-r-xl sm:rounded-l-none rounded-xl border-2 border-white shadow-lg hover:bg-gray-50 hover:shadow-xl active:scale-95 transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-white/50 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:bg-white"
                   aria-label="Subscribe to newsletter"
                 >
-                  Subscribe
+                  <span className="flex items-center justify-center gap-2">
+                    {isSubmitting ? (
+                      <>
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Subscribing...
+                      </>
+                    ) : (
+                      <>
+                        Subscribe
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                      </>
+                    )}
+                  </span>
                 </button>
               </div>
-              <p id="newsletter-privacy" className="text-sm opacity-75 mt-3">
-                We respect your privacy. Unsubscribe at any time.
-              </p>
+              
+              {/* Status Messages */}
+              {subscriptionStatus && (
+                <div id="newsletter-status" className="mt-4 text-center">
+                  {subscriptionStatus === 'success' ? (
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100/20 text-green-100 rounded-lg backdrop-blur-sm">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Successfully subscribed! Welcome to our sweet family!
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-100/20 text-red-100 rounded-lg backdrop-blur-sm">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Something went wrong. Please try again later.
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="mt-4 text-center">
+                <p id="newsletter-privacy" className="text-sm opacity-80 leading-relaxed">
+                  <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  We respect your privacy. Unsubscribe at any time.
+                </p>
+              </div>
             </form>
           </div>
         </div>
@@ -129,8 +206,8 @@ function Footer() {
             <div className="flex items-center mb-4">
               <img 
                 src={logoUrl} 
-                onError={(e) => { e.target.src = "/Images/CROISSANT LOGO (1).png"; }}
-                className="w-10 h-10 mr-3" 
+                onError={(e) => { e.target.src = "/Images/LogoWhite.png"; }}
+                className="w-10 h-10 mr-3 filter brightness-0 invert" 
                 alt="BakerzBite Logo" 
               />
               <span className="text-2xl font-bold text-[#D65A31]">Bakerz Bite</span>
