@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getCloudinaryUrl } from '../config/cloudinary';
+import { getCloudinaryUrl } from '@config/cloudinary';
 
 function Gallery() {
   const [selectedImage, setSelectedImage] = useState(null);

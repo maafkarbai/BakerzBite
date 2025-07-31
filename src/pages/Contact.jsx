@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { contactAPI, handleAPIError } from '../services/api';
+import { contactAPI, handleAPIError } from '@services/api';
 
 function Contact() {
   const [formData, setFormData] = useState({

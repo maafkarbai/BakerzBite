@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Dialog } from '@headlessui/react';
 import FocusLock from 'react-focus-lock';
-import { useAccessibility } from '../context/AccessibilityContext';
+import { useAccessibility } from '@context/AccessibilityContext';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 function AccessibleModal({ 

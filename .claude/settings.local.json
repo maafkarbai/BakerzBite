@@ -5,7 +5,8 @@
       "Bash(cld uploader upload:*)",
       "Bash(bun add:*)",
       "Bash(cloudinary:*)",
-      "Bash(export:*)"
+      "Bash(export:*)",
+      "Bash(bun run:*)"
     ],
     "deny": []
   }

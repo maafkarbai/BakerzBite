@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { getCloudinaryUrl } from "../config/cloudinary";
+import { getCloudinaryUrl } from "@config/cloudinary";
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -32,7 +32,7 @@ function Navbar() {
           <img
             src={logoUrl}
             onError={(e) => {
-              e.target.src = "/Images/CROISSANT LOGO (1).png";
+              e.target.src = "/static/Images/CROISSANT LOGO (1).png";
             }}
             className="w-12 h-12 animate-pulse hover:animate-spin transition-all duration-500 cursor-pointer"
             alt="Bakerz Bite Logo"

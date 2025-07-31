@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getCloudinaryUrl } from '../config/cloudinary';
+import { getCloudinaryUrl } from '@config/cloudinary';
 
 function Footer() {
   const [email, setEmail] = useState('');
@@ -206,7 +206,7 @@ function Footer() {
             <div className="flex items-center mb-4">
               <img 
                 src={logoUrl} 
-                onError={(e) => { e.target.src = "/Images/LogoWhite.png"; }}
+                onError={(e) => { e.target.src = "/static/Images/LogoWhite.png"; }}
                 className="w-10 h-10 mr-3 filter brightness-0 invert" 
                 alt="BakerzBite Logo" 
               />

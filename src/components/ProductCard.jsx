@@ -1,7 +1,7 @@
 import React from 'react';
-import { useCart } from '../context/CartContext';
-import { useAccessibility } from '../context/AccessibilityContext';
-import { getCloudinaryUrl } from '../config/cloudinary';
+import { useCart } from '@context/CartContext';
+import { useAccessibility } from '@context/AccessibilityContext';
+import { getCloudinaryUrl } from '@config/cloudinary';
 
 function ProductCard({ product }) {
   const { addToCart } = useCart();

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+import { useUnifiedAuth } from '@hooks/useUnifiedAuth';
+import GoogleSignInButton from '@components/GoogleSignInButton';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -9,74 +10,63 @@ function Register() {
     password: '',
     confirmPassword: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  
-  const { register } = useAuth();
-  const navigate = useNavigate();
+  const { 
+    isLoading, 
+    error, 
+    success, 
+    signUpWithEmail, 
+    signUpWithGoogle, 
+    clearMessages,
+    setError 
+  } = useUnifiedAuth();
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError(''); // Clear error when user types
-    setSuccess('');
+    clearMessages(); // Clear messages when user types
   };
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      setError('Name is required');
-      return false;
+      return 'Name is required';
     }
     if (!formData.email.trim()) {
-      setError('Email is required');
-      return false;
+      return 'Email is required';
     }
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return false;
+      return 'Password must be at least 6 characters long';
     }
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return false;
+      return 'Passwords do not match';
     }
-    return true;
+    return null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    setSuccess('');
-
-    if (!validateForm()) {
-      setIsLoading(false);
+    
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
-    try {
-      const result = await register({
-        name: formData.name.trim(),
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password,
-        role: 'customer' // Default role
-      });
-      
-      if (result.success) {
-        setSuccess('Registration successful! Please sign in to continue.');
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      } else {
-        setError(result.error);
-      }
-    } catch (err) {
-      setError('Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    await signUpWithEmail({
+      name: formData.name.trim(),
+      email: formData.email.trim().toLowerCase(),
+      password: formData.password,
+      role: 'customer' // Default role
+    });
+  };
+
+  const handleGoogleSuccess = (result) => {
+    // Success is handled by useUnifiedAuth
+  };
+
+  const handleGoogleError = (errorMessage) => {
+    // Error is handled by useUnifiedAuth
   };
 
   return (
@@ -248,6 +238,27 @@ function Register() {
               </button>
             </div>
           </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-2 text-gray-500">Or continue with</span>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <GoogleSignInButton
+                variant="signup"
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                disabled={isLoading}
+                onClick={signUpWithGoogle}
+              />
+            </div>
+          </div>
 
           <div className="mt-6">
             <div className="relative">

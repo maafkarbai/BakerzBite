@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { productsAPI } from '../services/api';
-import { getCloudinaryUrl } from '../config/cloudinary';
+import { useAuth } from '@context/AuthContext';
+import { productsAPI } from '@services/api';
+import { getCloudinaryUrl } from '@config/cloudinary';
 
 function AdminProducts() {
   const { isAdmin } = useAuth();

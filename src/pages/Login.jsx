@@ -1,54 +1,43 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useAccessibility } from '../context/AccessibilityContext';
-import AccessibleInput from '../components/AccessibleInput';
-import AccessibleButton from '../components/AccessibleButton';
+import { Link } from 'react-router-dom';
+import { useUnifiedAuth } from '@hooks/useUnifiedAuth';
+import AccessibleInput from '@components/AccessibleInput';
+import AccessibleButton from '@components/AccessibleButton';
+import GoogleSignInButton from '@components/GoogleSignInButton';
 
 function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  
-  const { login } = useAuth();
-  const { announceToScreenReader, accessibilityEnabled } = useAccessibility();
-  const navigate = useNavigate();
-  const location = useLocation();
-  
-  const from = location.state?.from?.pathname || '/';
+  const { 
+    isLoading, 
+    error, 
+    success, 
+    signInWithEmail, 
+    signInWithGoogle, 
+    clearMessages 
+  } = useUnifiedAuth();
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError(''); // Clear error when user types
+    clearMessages(); // Clear messages when user types
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError('');
+    await signInWithEmail(formData.email, formData.password);
+  };
 
-    try {
-      const result = await login(formData);
-      if (result.success) {
-        announceToScreenReader('Login successful. Redirecting...');
-        navigate(from, { replace: true });
-      } else {
-        setError(result.error);
-        announceToScreenReader(`Login failed: ${result.error}`);
-      }
-    } catch (err) {
-      const errorMessage = 'Login failed. Please try again.';
-      setError(errorMessage);
-      announceToScreenReader(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleGoogleSuccess = (result) => {
+    // Success is handled by useUnifiedAuth
+  };
+
+  const handleGoogleError = (errorMessage) => {
+    // Error is handled by useUnifiedAuth
   };
 
   return (
@@ -87,7 +76,7 @@ function Login() {
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
+{error && (
               <div className="rounded-md bg-red-50 p-4">
                 <div className="flex">
                   <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -95,6 +84,19 @@ function Login() {
                   </svg>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-red-800">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {success && (
+              <div className="rounded-md bg-green-50 p-4">
+                <div className="flex">
+                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-green-800">{success}</p>
                   </div>
                 </div>
               </div>
@@ -160,6 +162,27 @@ function Login() {
               </AccessibleButton>
             </div>
           </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-2 text-gray-500">Or continue with</span>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <GoogleSignInButton
+                variant="signin"
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                disabled={isLoading}
+                onClick={signInWithGoogle}
+              />
+            </div>
+          </div>
 
           <div className="mt-6">
             <div className="relative">

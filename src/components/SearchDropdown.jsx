@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useSearch } from '../context/SearchContext';
-import { getCloudinaryUrl } from '../config/cloudinary';
+import { useSearch } from '@context/SearchContext';
+import { getCloudinaryUrl } from '@config/cloudinary';
 
 function SearchDropdown({ searchInput, onSelectProduct }) {
   const { searchResults, isSearching, searchHistory, removeFromHistory } = useSearch();

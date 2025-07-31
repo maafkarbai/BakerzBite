@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAccessibility } from '../context/AccessibilityContext';
-import AccessibleModal from '../components/AccessibleModal';
+import { useAccessibility } from '@context/AccessibilityContext';
+import AccessibleModal from '@components/AccessibleModal';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 function AccessibilityDemo() {

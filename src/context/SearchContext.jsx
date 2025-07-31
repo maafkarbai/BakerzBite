@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { productsAPI } from '../services/api';
+import { productsAPI } from '@services/api';
 
 const SearchContext = createContext();
 

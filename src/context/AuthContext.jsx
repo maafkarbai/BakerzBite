@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import authService from '@services/authService.js';
 
 const AuthContext = createContext();
 
@@ -15,63 +16,111 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored user data on app load
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Error parsing stored user data:', error);
-        localStorage.removeItem('user');
-      }
-    }
-    setLoading(false);
-  }, []);
-
-  const login = async (credentials) => {
-    try {
-      // Simulate API call - replace with actual auth API
-      const response = await mockLogin(credentials);
-      
-      if (response.success) {
-        const userData = {
-          id: response.user.id,
-          email: response.user.email,
-          name: response.user.name,
-          role: response.user.role, // 'customer' or 'admin'
-          avatar: response.user.avatar || null,
-          token: response.token
-        };
+    // Listen for auth state changes from Firebase
+    const unsubscribe = authService.onAuthStateChanged((firebaseUser) => {
+      if (firebaseUser) {
+        // Check if user is admin based on email (in production, use Firebase custom claims)
+        const adminEmails = ['admin@bakerzbite.com', 'admin@example.com'];
+        const isAdminUser = adminEmails.includes(firebaseUser.email?.toLowerCase());
         
+        const userData = {
+          id: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName || firebaseUser.email,
+          role: isAdminUser ? 'admin' : 'customer',
+          avatar: firebaseUser.photoURL || null,
+          emailVerified: firebaseUser.emailVerified
+        };
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
-        return { success: true, user: userData };
       } else {
-        return { success: false, error: response.error };
+        setUser(null);
+        localStorage.removeItem('user');
       }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Unified authentication method that handles both email and Google sign-in
+  const authenticate = async (method, credentials = null) => {
+    try {
+      let response;
+      
+      switch (method) {
+        case 'email':
+          response = await authService.signInWithEmail(credentials.email, credentials.password);
+          break;
+        case 'google':
+          response = await authService.signInWithGoogle();
+          break;
+        default:
+          return { success: false, error: 'Invalid authentication method.' };
+      }
+      
+      return response;
     } catch (error) {
-      return { success: false, error: 'Login failed. Please try again.' };
+      return { 
+        success: false, 
+        error: method === 'google' 
+          ? 'Google sign-in failed. Please try again.' 
+          : 'Login failed. Please try again.' 
+      };
     }
+  };
+
+  // Unified registration method that handles both email and Google sign-up
+  const createAccount = async (method, userData = null) => {
+    try {
+      let response;
+      
+      switch (method) {
+        case 'email':
+          response = await authService.signUpWithEmail(userData.email, userData.password, userData.name);
+          break;
+        case 'google':
+          response = await authService.signInWithGoogle(); // Google handles both sign-in and sign-up
+          break;
+        default:
+          return { success: false, error: 'Invalid registration method.' };
+      }
+      
+      return response;
+    } catch (error) {
+      return { 
+        success: false, 
+        error: method === 'google' 
+          ? 'Google sign-up failed. Please try again.' 
+          : 'Registration failed. Please try again.' 
+      };
+    }
+  };
+
+  // Legacy methods for backward compatibility
+  const login = async (credentials) => {
+    return authenticate('email', credentials);
+  };
+
+  const loginWithGoogle = async () => {
+    return authenticate('google');
   };
 
   const register = async (userData) => {
-    try {
-      // Simulate API call - replace with actual registration API
-      const response = await mockRegister(userData);
-      
-      if (response.success) {
-        return { success: true, message: 'Registration successful! Please log in.' };
-      } else {
-        return { success: false, error: response.error };
-      }
-    } catch (error) {
-      return { success: false, error: 'Registration failed. Please try again.' };
-    }
+    return createAccount('email', userData);
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const registerWithGoogle = async () => {
+    return createAccount('google');
+  };
+
+  const logout = async () => {
+    try {
+      await authService.signOut();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'Logout failed. Please try again.' };
+    }
   };
 
   const isAdmin = () => {
@@ -85,8 +134,14 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     loading,
+    // Unified methods
+    authenticate,
+    createAccount,
+    // Legacy methods for backward compatibility
     login,
+    loginWithGoogle,
     register,
+    registerWithGoogle,
     logout,
     isAdmin,
     isLoggedIn
@@ -99,81 +154,3 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Mock authentication functions - replace with actual API calls
-const mockLogin = async (credentials) => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  // Mock users database
-  const users = [
-    {
-      id: 1,
-      email: 'admin@bakerzbite.com',
-      password: 'admin123',
-      name: 'Admin User',
-      role: 'admin'
-    },
-    {
-      id: 2,
-      email: 'customer@example.com',
-      password: 'customer123',
-      name: 'John Doe',
-      role: 'customer'
-    }
-  ];
-  
-  const user = users.find(u => 
-    u.email === credentials.email && u.password === credentials.password
-  );
-  
-  if (user) {
-    return {
-      success: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role
-      },
-      token: 'mock-jwt-token-' + user.id
-    };
-  } else {
-    return {
-      success: false,
-      error: 'Invalid email or password'
-    };
-  }
-};
-
-const mockRegister = async (userData) => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  // Basic validation
-  if (!userData.email || !userData.password || !userData.name) {
-    return {
-      success: false,
-      error: 'All fields are required'
-    };
-  }
-  
-  if (userData.password.length < 6) {
-    return {
-      success: false,
-      error: 'Password must be at least 6 characters long'
-    };
-  }
-  
-  // Check if user already exists (mock check)
-  if (userData.email === 'admin@bakerzbite.com' || userData.email === 'customer@example.com') {
-    return {
-      success: false,
-      error: 'User with this email already exists'
-    };
-  }
-  
-  return {
-    success: true,
-    message: 'Registration successful'
-  };
-};

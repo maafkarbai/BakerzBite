@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAccessibility } from '../context/AccessibilityContext';
+import { useAccessibility } from '@context/AccessibilityContext';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { 
   AdjustmentsHorizontalIcon,

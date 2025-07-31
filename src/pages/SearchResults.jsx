@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSearch } from '../context/SearchContext';
-import ProductCard from '../components/ProductCard';
+import { useSearch } from '@context/SearchContext';
+import ProductCard from '@components/ProductCard';
 
 function SearchResults() {
   const location = useLocation();

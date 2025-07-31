@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
-import { useSearch } from '../context/SearchContext';
-import { useAccessibility } from '../context/AccessibilityContext';
-import { getCloudinaryUrl } from '../config/cloudinary';
+import { useAuth } from '@context/AuthContext';
+import { useCart } from '@context/CartContext';
+import { useSearch } from '@context/SearchContext';
+import { useAccessibility } from '@context/AccessibilityContext';
+import { getCloudinaryUrl } from '@config/cloudinary';
 import { useHotkeys } from 'react-hotkeys-hook';
-import SearchDropdown from './SearchDropdown';
-import UserMenu from './UserMenu';
+import SearchDropdown from '@components/SearchDropdown';
+import UserMenu from '@components/UserMenu';
 
 function EnhancedNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -95,7 +95,7 @@ function EnhancedNavbar() {
               <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
                 <img 
                   src={logoUrl} 
-                  onError={(e) => { e.target.src = "/Images/CROISSANT LOGO (1).png"; }}
+                  onError={(e) => { e.target.src = "/static/Images/CROISSANT LOGO (1).png"; }}
                   className="w-10 h-10" 
                   alt="BakerzBite Logo" 
                 />

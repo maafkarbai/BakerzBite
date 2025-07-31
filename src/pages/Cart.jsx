@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { getCloudinaryUrl } from '../config/cloudinary';
+import { useCart } from '@context/CartContext';
+import { getCloudinaryUrl } from '@config/cloudinary';
 
 function Cart() {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();

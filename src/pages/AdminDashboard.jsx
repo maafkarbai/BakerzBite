@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { productsAPI } from '../services/api';
+import { useAuth } from '@context/AuthContext';
+import { productsAPI, analyticsAPI } from '@services/api';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { format, subDays, isWithinInterval } from 'date-fns';
+import toast, { Toaster } from 'react-hot-toast';
 
 function AdminDashboard() {
   const { user, isAdmin } = useAuth();
@@ -12,7 +15,13 @@ function AdminDashboard() {
     revenue: 0
   });
   const [recentProducts, setRecentProducts] = useState([]);
+  const [salesData, setSalesData] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Chart colors
+  const COLORS = ['#D65A31', '#E97451', '#C54A21', '#B8441E', '#A63B1A'];
 
   useEffect(() => {
     loadDashboardData();
@@ -25,14 +34,50 @@ function AdminDashboard() {
       const products = productsResponse.data || [];
       
       setRecentProducts(products.slice(0, 5));
+      
+      // Mock sales data for the last 7 days
+      const mockSalesData = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = subDays(new Date(), i);
+        mockSalesData.push({
+          name: format(date, 'MMM dd'),
+          sales: Math.floor(Math.random() * 2000) + 500,
+          orders: Math.floor(Math.random() * 25) + 5,
+          customers: Math.floor(Math.random() * 15) + 3
+        });
+      }
+      setSalesData(mockSalesData);
+
+      // Mock category distribution data
+      const mockCategoryData = [
+        { name: 'Cakes', value: products.filter(p => p.category === 'cakes').length, color: COLORS[0] },
+        { name: 'Pastries', value: products.filter(p => p.category === 'pastries').length, color: COLORS[1] },
+        { name: 'Cookies', value: products.filter(p => p.category === 'cookies').length, color: COLORS[2] },
+        { name: 'Bread', value: Math.floor(Math.random() * 8) + 2, color: COLORS[3] },
+        { name: 'Drinks', value: Math.floor(Math.random() * 6) + 1, color: COLORS[4] }
+      ];
+      setCategoryData(mockCategoryData);
+
+      // Mock recent orders
+      const mockRecentOrders = [
+        { id: 'ORD-001', customer: 'John Smith', total: 45.99, status: 'pending', time: '2m ago' },
+        { id: 'ORD-002', customer: 'Sarah Johnson', total: 32.50, status: 'confirmed', time: '5m ago' },
+        { id: 'ORD-003', customer: 'Mike Wilson', total: 78.25, status: 'in-progress', time: '12m ago' },
+        { id: 'ORD-004', customer: 'Emily Davis', total: 23.75, status: 'ready', time: '18m ago' }
+      ];
+      setRecentOrders(mockRecentOrders);
+      
       setStats({
         totalProducts: products.length,
         totalOrders: 127, // Mock data
         totalCustomers: 89, // Mock data
         revenue: 15420 // Mock data
       });
+
+      toast.success('Dashboard data loaded successfully!');
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
+      toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
@@ -224,7 +269,143 @@ function AdminDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Sales Chart */}
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Sales Overview (Last 7 Days)</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={salesData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip 
+                  formatter={(value, name) => [`$${value}`, name === 'sales' ? 'Sales' : 'Orders']}
+                  labelFormatter={(label) => `Date: ${label}`}
+                />
+                <Legend />
+                <Area 
+                  type="monotone" 
+                  dataKey="sales" 
+                  stackId="1" 
+                  stroke="#D65A31" 
+                  fill="#D65A31" 
+                  fillOpacity={0.6}
+                  name="Sales ($)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Category Distribution */}
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Product Categories</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {categoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => [`${value} products`, 'Count']} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Recent Orders */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
+            <Link
+              to="/admin/orders"
+              className="text-[#D65A31] hover:text-[#C54A21] text-sm font-medium"
+            >
+              View All Orders
+            </Link>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Order ID</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Customer</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Total</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Status</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentOrders.map((order) => (
+                  <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4 text-sm font-medium text-gray-900">{order.id}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{order.customer}</td>
+                    <td className="py-3 px-4 text-sm font-medium text-gray-900">${order.total.toFixed(2)}</td>
+                    <td className="py-3 px-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                        order.status === 'in-progress' ? 'bg-purple-100 text-purple-800' :
+                        order.status === 'ready' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {order.status.replace('-', ' ')}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-500">{order.time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Performance Metrics */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-6">Weekly Performance</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={salesData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="orders" fill="#D65A31" name="Orders" />
+              <Bar dataKey="customers" fill="#E97451" name="New Customers" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            style: {
+              background: '#22c55e',
+            },
+          },
+          error: {
+            style: {
+              background: '#ef4444',
+            },
+          },
+        }}
+      />
     </div>
   );
 }

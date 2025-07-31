@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import HeroSection from '../components/HeroSection';
-import ProductCategories from '../components/ProductCategories';
-import FeaturedProducts from '../components/FeaturedProducts';
-import Testimonials from '../components/Testimonials';
+import HeroSection from '@components/HeroSection';
+import ProductCategories from '@components/ProductCategories';
+import FeaturedProducts from '@components/FeaturedProducts';
+import Testimonials from '@components/Testimonials';
 
 function Home() {
   return (

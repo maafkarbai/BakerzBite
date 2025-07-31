@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { useAccessibility } from '../context/AccessibilityContext';
+import { useAccessibility } from '@context/AccessibilityContext';
 
 const AccessibleButton = forwardRef(({
   children,
